@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex Allies</title>
+    <link rel="stylesheet" href="../css/canvas.css">
+    <script src="../lib/JQuery.js"></script>
+    <script src="../lib/Three.js"></script>
+    <script src="../src/game/Player.js"></script>
+    <script src="../src/game/Ally.js"></script>
+    <script>
+        $(document).ready(function() {
+            let scene = new THREE.Scene();
+            let camera = new THREE.PerspectiveCamera(45, $('#hex-root').width() / $('#hex-root').height(), 0.1, 10000);
+            let renderer = new THREE.WebGLRenderer({antialias: true});
+            renderer.setClearColor(0xffffff);
+            renderer.setSize($("#hex-root").width(), $("#hex-root").height());
+            camera.position.set(0, 650, 800);
+            camera.updateProjectionMatrix();
+            camera.lookAt(scene.position);
+            $("#hex-root").append(renderer.domElement);
+
+            $(window).on('resize', this, function(e) {
+                camera.aspect = $("#hex-root").width() / $("#hex-root").height();
+                renderer.setSize($("#hex-root").width(), $("#hex-root").height());
+                camera.updateProjectionMatrix();
+            });
+
+            let raycaster = new THREE.Raycaster();
+            let mouseVector = new THREE.Vector2();
+            let clickedVector = new THREE.Vector3(0, 0, 0);
+            let directionVector = new THREE.Vector3(0, 0, 0);
+
+            let pGeometry = new THREE.SphereGeometry(15, 8, 8);
+            let pMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+            let pointer = new THREE.Mesh(pGeometry, pMaterial);
+            pointer.name = 'pointer';
+            scene.add(pointer);
+
+            let isMouseDown = false;
+            $(document).on('mousedown', function(e) { 
+                isMouseDown = true; 
+                mouseVector.x = (e.clientX / $(window).width()) * 2 - 1;
+                mouseVector.y = -(e.clientY / $(window).height()) * 2 + 1;
+
+                raycaster.setFromCamera(mouseVector, camera);
+                let clicked, intersects = raycaster.intersectObjects(scene.children, true);
+                if(clicked = intersects.find(obj => { return obj.object.name == 'ally'; })) {
+                    if(!clicked.object.parent.following) {
+                        clicked.object.parent.following = true;
+                        allies.push(clicked.object.parent);
+                        isMouseDown = false;
+                    }
+
+                }
+            });
+            $(document).on('mouseup', function() { isMouseDown = false; });
+            $(document).on('mousemove', function(e) {
+                mouseVector.x = (e.clientX / $(window).width()) * 2 - 1;
+                mouseVector.y = -(e.clientY / $(window).height()) * 2 + 1;
+            }); 
+
+            let geometry = new THREE.PlaneGeometry(2000, 2000);
+            let material = new THREE.MeshBasicMaterial({ color: 0xf5eba1 });
+            let plane = new THREE.Mesh(geometry, material);
+            plane.rotation.x = -Math.PI / 2;
+            scene.add(plane);
+
+            let grid = new THREE.GridHelper(2000, 20);
+            scene.add(grid);
+
+            let player = new Player();
+            player.position.y = 51;
+            scene.add(player);
+
+            let allies = [];
+            for(let i = 0; i < 10; i++) {
+                let ally = new Ally();
+                ally.position.set(Math.random() * 2000 - 1000, 51,  Math.random() * 2000 - 1000);
+                scene.add(ally);
+            }
+
+            render();
+            function render() {
+                requestAnimationFrame(render.bind(this));
+
+                if(isMouseDown) {
+                    raycaster.setFromCamera(mouseVector, camera);
+                    let intersects = raycaster.intersectObjects(scene.children);
+                    if(intersects.length > 0) {
+                        if(intersects[0].object.name != 'pointer') {
+                            clickedVector = intersects[0].point;
+                            directionVector = clickedVector.clone().sub(player.position).normalize();
+                            directionVector.y = 0;
+
+                            pointer.position.x = clickedVector.x;
+                            pointer.position.z = clickedVector.z;
+
+                            let angle = Math.atan2(
+                                player.position.clone().x - clickedVector.x,
+                                player.position.clone().z - clickedVector.z);
+                            player.getPlayerMesh().rotation.y = angle + Math.PI;
+                        }
+                    }
+                }
+
+                if(Math.abs(player.position.clone().distanceTo(clickedVector)) > 60) {
+                    player.translateOnAxis(directionVector, 8);
+                }
+
+                for(let i = 0; i < allies.length; i++) {
+                    if(allies[i].following) {
+                        let target = (i == 0 ? player : allies[i - 1]);
+                        allies[i].calculateMovement(target);
+                        if(Math.abs(allies[i].position.clone().distanceTo(target.position)) > 120)
+                            allies[i].translateOnAxis(allies[i].directionVector, 7);
+                    }
+                }
+
+                camera.position.x = player.position.x;
+                camera.position.y = player.position.y + 650;
+                camera.position.z = player.position.z + 800;
+
+                renderer.render(scene, camera);
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="hex-root"></div>
+</body>
+</html>

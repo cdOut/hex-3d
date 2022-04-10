@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../lib/JQuery.js"></script>
+    <script src="../src/editor/Hex.js"></script>
+    <script src="../src/editor/Core.js"></script>
+    <title>Hex Editor</title>
+</head>
+<body>
+    <div id="hex-control">
+        <h1>MAP SIZE</h1>
+        <select id="map-size"></select>
+        <hr>
+
+        <h1>3D VIEW</h1>
+        <div id="view-hex">Go to hex!</div>
+        <div id="view-game">Go to game!</div>
+        <div id="view-player">Player movement!</div>
+        <div id="view-ally">Ally movement!</div>
+        <div id="view-allies">Multiple allies!</div>
+        <div id="view-allymodel">Ally model!</div>
+        <hr>
+
+        <h1>TILE TYPES</h1>
+        <div class="selected" id="type-wall">Walls</div>
+        <div id="type-enemy">Enemy</div>
+        <div id="type-treasure">Treasure</div>
+        <div id="type-light">Light</div>
+        <hr>
+
+        <h1>SAVING</h1>
+        <input id="map-name" placeholder="map-name" type="text">
+        <div id="save-btn">Save to file</div>
+        <hr>
+
+        <h1>LOADING</h1>
+        <select id="map-list"></select>
+        <div id="load-btn">Load from file</div>
+    </div>
+    <div id="hex-preview"></div>
+    <div id="hex-editor"></div>
+</body>
+</html>

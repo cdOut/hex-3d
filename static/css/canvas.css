@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    overflow: hidden;
+    display: flex;
+    height: 100vh;
+}
+#hex-root {
+    position: relative;
+    flex: 1;
+}

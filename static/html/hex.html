@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex</title>
+    <link rel="stylesheet" href="../css/canvas.css">
+    <script src="../lib/JQuery.js"></script>
+    <script src="../lib/Three.js"></script>
+    <script src="../lib/OrbitControls.js"></script>
+    <script src="../src/game/Settings.js"></script>
+    <script src="../src/game/Doorway.js"></script>
+    <script src="../src/game/Room.js"></script>
+    <script src="../src/game/Light.js"></script>
+    <script>
+        $(document).ready(function() {
+            let scene = new THREE.Scene();
+            let camera = new THREE.PerspectiveCamera(45, $('#hex-root').width() / $('#hex-root').height(), 0.1, 10000);
+            let renderer = new THREE.WebGLRenderer({antialias: true});
+            renderer.setClearColor(0xffffff);
+            renderer.setSize($("#hex-root").width(), $("#hex-root").height());
+            camera.position.set(180, 250, 180);
+            camera.updateProjectionMatrix();
+            camera.lookAt(scene.position);
+            $("#hex-root").append(renderer.domElement);
+
+            $(window).on('resize', this, function(e) {
+                camera.aspect = $("#hex-root").width() / $("#hex-root").height();
+                renderer.setSize($("#hex-root").width(), $("#hex-root").height());
+                camera.updateProjectionMatrix();
+            });
+
+            let axes = new THREE.AxesHelper(500);
+            axes.position.y = -Settings.scale * 0.42;
+            scene.add(axes);
+
+            let gridHelper = new THREE.GridHelper(1000, 20, 0xdddddd, 0xdddddd);
+            gridHelper.position.y = -Settings.scale * 0.425;
+            scene.add( gridHelper );
+
+            let orbitControl = new THREE.OrbitControls(camera, renderer.domElement);
+            orbitControl.addEventListener('change', function () { renderer.render(scene, camera) });
+
+            //===================================
+            //  Room object for testing purposes
+
+            let room = new Room([2, 3, 4], 0);
+            scene.add(room);
+
+            let light = new Light();
+            light.position.y = Settings.scale * 0.6;
+            scene.add(light);
+
+            render();
+            function render() {
+                requestAnimationFrame(render.bind(this));
+                renderer.render(scene, camera);
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="hex-root"></div>
+</body>
+</html>

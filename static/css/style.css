@@ -1,0 +1,91 @@
+body {
+    font-family: 'Lato', sans-serif;
+    user-select: none;
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+#hex-control {
+    flex: 0 150px;
+    width: 300px;
+    background: #ddd;
+}
+
+#hex-control > h1 {
+    font-size: 20px;
+    text-align: center;
+}
+
+#hex-control > div, input, select {
+    border: 3px solid black;
+    box-sizing: border-box;
+    background: #eee;
+    text-align: center;
+    font-weight: bold;
+    margin: 10px auto;
+    display: block;
+    width: 130px;
+    padding: 5px;
+}
+
+#hex-control > input, select {
+    font-weight: normal;
+}
+
+#hex-control > div:hover {
+    background: #FFA500;
+    transition: background 0.2s linear;
+}
+
+#hex-control > .selected {
+    background: #FFA500;
+}
+
+#hex-control > hr {
+    border-bottom: 2px solid black;
+    margin: 15px auto;
+    width: 130px;
+}
+
+#hex-preview {
+    flex: 0 350px;
+    background: #eee;
+    font-family: monospace;
+    box-sizing: border-box;
+    font-weight: bold;
+    white-space: pre;
+    padding: 10px;
+}
+
+#hex-editor {
+    flex: 1;
+    background: #fff;
+    position: relative;
+}
+
+#hex-editor > div {
+    display: flex;
+    background-image: url("../res/hex.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    position: absolute;
+    font-size: 24px;
+    width: 115px;
+    height: 100px;
+}
+
+#hex-editor > .arrow::before {
+    content: '';
+    background-image: url("../res/arrow.svg");
+    background-size: 100% 100%;
+    position: absolute;
+    height: 40px;
+    width: 20px;
+    top: 5px;
+}
